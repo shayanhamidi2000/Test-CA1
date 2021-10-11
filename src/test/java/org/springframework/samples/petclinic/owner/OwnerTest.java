@@ -4,8 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -33,6 +33,32 @@ public class OwnerTest {
 
         // Assert
         assertEquals("Addresses do not match!", providedAddress, actualAddress);
+    }
+
+    @Test
+    public void getOrSetCity_providedCityWasSet_theProvidedCityMustBeReturned() {
+        // Arrange
+        String providedCity = new String("City");
+
+        // Act
+        cut.setAddress(providedCity);
+        String actualCity = cut.getAddress();
+
+        // Assert
+        assertEquals("Addresses do not match!", providedCity, actualCity);
+    }
+
+    @Test
+    public void getOrSetTelephone_providedTelephoneWasSet_theProvidedTelephoneMustBeReturned() {
+        // Arrange
+        String providedTelephone = new String("City");
+
+        // Act
+        cut.setAddress(providedTelephone);
+        String actualTelephone = cut.getAddress();
+
+        // Assert
+        assertEquals("Addresses do not match!", providedTelephone, actualTelephone);
     }
 
     @Test
@@ -76,5 +102,91 @@ public class OwnerTest {
         // Assert
         assertTrue("providedPet Is not in the PetSet!", (cut.getPetsInternal().size() == 1) && (cut.getPetsInternal().contains(providedPet)));
         assertEquals("petOwners do not match!", cut, providedPet.getOwner());
+    }
+
+    @Test
+    public void addPet_providedAnOldPet_oldPetIsAddedToThePetSet() {
+        // Arrange
+        Pet providedPet = new Pet();
+        providedPet.setId(1); // Sample Id
+        Set<Pet> petSet = new HashSet<>();
+        cut.setPetsInternal(petSet);
+
+        // Act
+        cut.addPet(providedPet);
+
+        // Assert
+        assertEquals("providedPet is in the PetSet!", 0, cut.getPetsInternal().size());
+        assertEquals("petOwners do not match!", cut, providedPet.getOwner());
+    }
+
+    @Test
+    public void removePet_providedPetIsInThePetSet_providedPetMustBeRemovedFromTheSet() {
+        // Arrange
+        Pet providedPet = new Pet();
+        Set<Pet> petSet = new HashSet<>();
+        petSet.add(providedPet);
+        cut.setPetsInternal(petSet);
+
+        // Act
+        cut.removePet(providedPet);
+
+        // Assert
+        assertEquals("providedPet is still in the PetSet!", 0, cut.getPetsInternal().size());
+    }
+
+    @Test
+    public void getPets_providedPetSetInternalWithRandomOrder_sortedListOfThePetSetMustBeReturned() {
+        // Arrange
+        Set<Pet> petSet = new HashSet<>();
+        Pet firstPet = new Pet(); firstPet.setName("Ab"); petSet.add(firstPet);
+        Pet secondPet = new Pet(); secondPet.setName("c"); petSet.add(secondPet);
+        Pet thirdPet = new Pet(); thirdPet.setName("aa"); petSet.add(thirdPet);
+        cut.setPetsInternal(petSet);
+        List<Pet> expectedSortedPet = Collections.unmodifiableList(new ArrayList<Pet>(Arrays.asList(thirdPet, firstPet, secondPet)));
+
+        // Act
+        List<Pet> actualSortedPet = cut.getPets();
+
+        // Assert
+        assertEquals("Expected List and actual list are not the same!", expectedSortedPet, actualSortedPet);
+    }
+
+    @Test
+    public void getPet_ignoreNewArgumentIsDefaultFalseAndDemandedNameIsProvided_theCorrespondingPetMustBeReturned() {
+        // Arrange
+        Set<Pet> petSet = new HashSet<>();
+        Pet firstPet = new Pet(); firstPet.setName("Skippy"); petSet.add(firstPet);
+        Pet secondPet = new Pet(); secondPet.setName("SCooby"); petSet.add(secondPet);
+        Pet thirdPet = new Pet(); thirdPet.setName("snoop Dog"); petSet.add(thirdPet);
+        cut.setPetsInternal(petSet);
+
+        // Act
+        Pet actualDemandedNamePet = cut.getPet("snoop Dog");
+
+        // Assert
+        assertEquals("Actual pet`s name and expected pet`s name are not the same!", thirdPet, actualDemandedNamePet);
+    }
+
+    @Test
+    public void getPet_ignoreNewArgumentIsTrueAndDemandedNameIsProvidedAndCorrespondingPetIsNew_nullMustBeReturned() {
+        // Arrange
+        Set<Pet> petSet = new HashSet<>();
+        Pet firstPet = new Pet();
+            firstPet.setName("Skippy");
+            firstPet.setId(1); // old Pet
+            petSet.add(firstPet);
+        Pet secondPet = new Pet(); secondPet.setName("SCooby"); petSet.add(secondPet);
+        Pet thirdPet = new Pet();
+            thirdPet.setName("snoop Dog");
+            thirdPet.setId(2); // old Pet
+            petSet.add(thirdPet);
+        cut.setPetsInternal(petSet);
+
+        // Act
+        Pet actualDemandedNamePet = cut.getPet("SCooby", true);
+
+        // Assert
+        assertNull("A corresponding pet was found!", actualDemandedNamePet);
     }
 }
