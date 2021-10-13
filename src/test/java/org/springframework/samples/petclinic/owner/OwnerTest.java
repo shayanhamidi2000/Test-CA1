@@ -3,12 +3,14 @@ package org.springframework.samples.petclinic.owner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.theories.Theories;
+import org.junit.runner.RunWith;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.junit.Assert.*;
 
+@RunWith(Theories.class)
 public class OwnerTest {
     private Owner cut;
 
@@ -152,6 +154,7 @@ public class OwnerTest {
         assertEquals("Expected List and actual list are not the same!", expectedSortedPet, actualSortedPet);
     }
 
+    /*
     @Test
     public void getPet_ignoreNewArgumentIsDefaultFalseAndDemandedNameIsProvided_theCorrespondingPetMustBeReturned() {
         // Arrange
@@ -166,8 +169,9 @@ public class OwnerTest {
 
         // Assert
         assertEquals("Actual pet`s name and expected pet`s name are not the same!", thirdPet, actualDemandedNamePet);
-    }
+    }*/
 
+    /*
     @Test
     public void getPet_ignoreNewArgumentIsTrueAndDemandedNameIsProvidedAndCorrespondingPetIsNew_nullMustBeReturned() {
         // Arrange
@@ -188,5 +192,5 @@ public class OwnerTest {
 
         // Assert
         assertNull("A corresponding pet was found!", actualDemandedNamePet);
-    }
+    }*/
 }
