@@ -16,7 +16,6 @@ import static org.junit.Assert.*;
 @RunWith(Theories.class)
 public class PetTest {
     Pet cut = new Pet();
-    public static int n = 0;
     public static Visit firstVisit = new Visit();
     public static Visit secondVisit = new Visit();
     public static Visit thirdVisit = new Visit();
@@ -56,7 +55,6 @@ public class PetTest {
 
         // Act
         List<Visit> actualVisits = cut.getVisits();
-        System.out.println("n is " + ++n);
 
         // Assert
         assertEquals("This set is not sorted!", expectedSortedVisits, actualVisits);
