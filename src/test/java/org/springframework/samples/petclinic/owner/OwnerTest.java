@@ -3,10 +3,13 @@ package org.springframework.samples.petclinic.owner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -154,43 +157,45 @@ public class OwnerTest {
         assertEquals("Expected List and actual list are not the same!", expectedSortedPet, actualSortedPet);
     }
 
-    /*
-    @Test
-    public void getPet_ignoreNewArgumentIsDefaultFalseAndDemandedNameIsProvided_theCorrespondingPetMustBeReturned() {
+    @DataPoints
+    public static boolean[] ignoreNewCases(){
+        return new boolean[] {true , false};
+    }
+
+    @Theory
+    public void getPet_demandedNameIsProvided_theCorrespondingPetMustBeReturned(boolean ignoreNewCase) {
         // Arrange
         Set<Pet> petSet = new HashSet<>();
         Pet firstPet = new Pet(); firstPet.setName("Skippy"); petSet.add(firstPet);
         Pet secondPet = new Pet(); secondPet.setName("SCooby"); petSet.add(secondPet);
-        Pet thirdPet = new Pet(); thirdPet.setName("snoop Dog"); petSet.add(thirdPet);
+        Pet thirdPet = new Pet(); thirdPet.setName("snoop Dog"); petSet.add(thirdPet); thirdPet.setId(1); // old Pet
         cut.setPetsInternal(petSet);
 
         // Act
-        Pet actualDemandedNamePet = cut.getPet("snoop Dog");
+        Pet actualDemandedNamePet = cut.getPet("snoop Dog", ignoreNewCase);
 
         // Assert
         assertEquals("Actual pet`s name and expected pet`s name are not the same!", thirdPet, actualDemandedNamePet);
-    }*/
+    }
 
-    /*
-    @Test
-    public void getPet_ignoreNewArgumentIsTrueAndDemandedNameIsProvidedAndCorrespondingPetIsNew_nullMustBeReturned() {
+    @Theory
+    public void getPet_providedAndCorrespondingPetIsNotInTheSet_nullMustBeReturned(boolean ignoreNewCase) {
         // Arrange
         Set<Pet> petSet = new HashSet<>();
         Pet firstPet = new Pet();
             firstPet.setName("Skippy");
             firstPet.setId(1); // old Pet
             petSet.add(firstPet);
-        Pet secondPet = new Pet(); secondPet.setName("SCooby"); petSet.add(secondPet);
-        Pet thirdPet = new Pet();
-            thirdPet.setName("snoop Dog");
-            thirdPet.setId(2); // old Pet
-            petSet.add(thirdPet);
+        Pet secondPet = new Pet();
+            secondPet.setName("snoop Dog");
+            secondPet.setId(2); // old Pet
+            petSet.add(secondPet);
         cut.setPetsInternal(petSet);
 
         // Act
-        Pet actualDemandedNamePet = cut.getPet("SCooby", true);
+        Pet actualDemandedNamePet = cut.getPet("SCooby", ignoreNewCase);
 
         // Assert
         assertNull("A corresponding pet was found!", actualDemandedNamePet);
-    }*/
+    }
 }
